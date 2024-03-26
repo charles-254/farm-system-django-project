@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+{%  extends 'farm/base_dashboard.html' %}
+{% block content%}
+<html>
+
+<head>
+    <title>Achieved Goal Management </title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: black;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 16px;
+            text-align: left;
+        }
+
+        th {
+            background-color: rgb(240,50,50);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+            margin-right: 10px;
+            transition: color 0.3s ease-in-out;
+        }
+
+        a:hover {
+            color: #0056b3;
+        }
+
+        form {
+            display: inline;
+        }
+
+        .add-crop-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .add-crop-link:hover {
+            background-color: #218838;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Achieved Goal Management</h1>
+
+    <table class="table table-hover table-striped">
+        <thead >
+            <tr>
+                <th>Goal ID</th>
+                <th>Goal Name</th>
+                <th>Goal Description</th>
+                <th>Date set</th>
+                <th>Achieved</th>
+                <th>Achievement date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for goal in achieved_goals %}
+            <tr>
+                <td>{{ goal.goal_id }}</td>
+                <td>{{ goal.name}}</td>
+                <td>{{ goal.description }}</td>
+                <td>{{ goal.date }}</td>
+                <td>{{ goal.achieved }}</td>
+                <td>{{ goal.achievement_date }}</td>
+                <td><a href="{% url 'edit_goal' goal.goal_id %}"><button type="button" class="btn btn-secondary btn-sm">edit</button></a>
+                    <a href="{% url 'delete_goal' goal.goal_id %}"><button type="button" class="btn btn-secondary btn-sm">delete</button></a>
+                </td>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+
+</html>
+{% endblock content%}

@@ -1,0 +1,85 @@
+{%  extends 'farm/base_dashboard.html' %}
+
+{% block content %}
+<style>
+    th, td {
+        border: 1px solid #ddd;
+        padding: 16px;
+        ext-align: left;
+    }
+
+    th {
+        background-color: rgb(240,50,50);
+        color: #fff;
+        font-weight: bold;
+        }
+
+</style>
+<h3 class="col-md-5 mx-auto mt-2">Employee Management</h3>
+<div class="row">
+    <div class="col-md-2" style="border-right: 3px solid #ddd;">
+        <a href="{% url 'dashboard'%}"><button class="btn btn-link">dashboard</button></a>
+        <button id="employee-data" class="btn btn-link">employee data</button>
+        <a href="{% url 'payment-status' %}"><button class="btn btn-link">payment details</button></a>
+        <a href="{% url 'payment-records' %}"><button class="btn btn-link">payment records</button></a>
+    </div>
+    <div id="employee-data-section" class="col">
+        <div class="d-flex justify-content-end">
+            <a href="{% url 'add-employee'%}" class="btn btn-success btn-md">add employee</a>
+        </div>
+         <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">National ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Salary</th>
+                    <th scope="col">Date Employed</th>
+                    <th scope="col"></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% if employees|length == 0 %}
+                    <tr>
+                        <th scope="row">-</th>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                {% endif %}
+                {% for employee in employees %}
+                    <tr>
+                        <th scope="row">{{ employee.id }}</th>
+                        <td>{{ employee.national_ID }}</td>
+                        <td>{{ employee.name }}</td>
+                        <td>{{ employee.email }}</td>
+                        <td>{{ employee.phone }}</td>
+                        <td>{{ employee.address }}</td>
+                        <td>{{ employee.position }}</td>
+                        <td>{{ employee.salary }}</td>
+                        <td>{{ employee.date_employed}}</td>
+                        <td><a href="{% url 'edit-employee' employee.id%}"><button type="button" class="btn btn-secondary btn-sm">edit</button></a>
+                            <a href="{% url 'delete-employee' employee.id%}"><button type="button" class="btn btn-secondary btn-sm">delete</button></a>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock content %}

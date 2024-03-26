@@ -1,0 +1,98 @@
+{%  extends 'farm/base_dashboard.html' %}
+{% load static %}
+{% block content %}
+<style>
+    #dash{
+        position: absolute;
+        left: 20;
+    }
+    #icon_img{
+        height: 90px;
+        width: 90px;
+        position: relative;
+        left: 50;
+    }
+    p{
+        font-size: 20px;
+        font-weight: bold;
+    }
+</style>
+<div class="container mt-4">
+    <div class="row" id="dash">
+        <div class="col-md-2" style="border-right: 3px solid #ddd;">
+            <img src="{% static 'images/login.png' %}" alt="icon image" class="img-fluid" id="icon_img"><br>
+            <p class="text text-info">Username:{{username}}</p>
+            <a href="{% url 'index' %}" class="btn btn-secondary">Home</a><br>
+            <a href="{% url 'employee-view' %}" class="btn btn-secondary my-2">Employee Management</a>
+            <a href="{% url 'crop_list' %}" class="btn btn-secondary">Crop Management</a>
+            <a href="{% url 'livestock_list' %}" class="btn btn-secondary my-2">Livestock Management</a><br><hr style="3px solid"><br>
+            <a href="{% url 'expense_list' %}" class="btn btn-secondary">Expenses</a><br>
+            <a href="{% url 'sale_list' %}"class="btn btn-secondary my-2">Sales</a><br>
+            <a href="{% url 'general_expense_summary' %}" class="btn btn-secondary">Expense Summary</a><br>
+            <a href="{% url 'general_sale_summary' %}" class="btn btn-secondary my-2">Sales Summary</a><br>
+            <a href="{% url 'general_financial_report' %}" class="btn btn-secondary">Financial Report</a><br><hr style="3px solid #ddd;">
+            <a href="{% url 'task_list' %}" class="btn btn-secondary my-2">Tasks</a><br>
+            <a href="{% url 'goal_list' %}" class="btn btn-secondary ">Goals</a><br>
+        </div>
+
+        <div class="col">
+            <div>
+                <a href="{% url 'active_task' %}"><button type="button" class="btn btn-primary me-3">Active tasks<br><span class="badge">{{ active_tasks|length }}</span></button></a>
+                <a href="{% url 'active_goal' %}"><button type="button" class="btn btn-primary me-3">Active goals<br><span class="badge">{{ active_goals|length }}</span></button></a>
+                <a href="{% url 'employee-view'%}"><button type="button" class="btn btn-primary me-3">Total employees<br><span class="badge">{{employees|length}}</span></button></a>
+                <a href="#"><button type="button" class="btn btn-primary me-3">Total Sales<br><span class="badge">{{ total_sale }}</span></button></a>
+                <a href="#"><button type="button" class="btn btn-primary me-3">Total expenses<br><span class="badge">{{ total_expense }}</span></button></a>
+                <a href="#"><button type="button" class="btn btn-primary me-3">{{ profit_loss }}<br><span class="badge">{{ net_benefit }}</span></button></a>
+            </div>
+            <div>
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <div class="container mt-5">
+                    <h1 class="text-center">Farm Data</h1>
+                    <p class="fw-light">This is a comparison of all data in each category since starting of farm</p>
+                    <canvas id="myChart" width="400" height="200"></canvas>
+                </div>
+
+                <script>
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    var myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['crop sales', 'crop expenses', 'livestock sales', 'livestock expenses', 'other sales', 'other expenses', 'employee salary'],
+                            datasets: [{
+                                label: '%',
+                                data: [{{percent_crop_sale}}, {{percent_crop_exp}}, {{percent_livestock_sales}}, {{percent_livestock_exp}}, {{percent_other_sales}}, {{percent_other_exp}}, {{percent_employee_salary}}],
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.2)',
+                                    'rgba(54, 162, 235, 0.2)',
+                                    'rgba(255, 206, 86, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(153, 102, 255, 0.2)',
+                                    'rgba(255, 159, 64, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100
+                                }
+                            }
+                        }
+                    });
+                </script>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

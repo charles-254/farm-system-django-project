@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+{%  extends 'farm/base_dashboard.html' %}
+{% block content%}
+<html>
+
+<head>
+    <title>General Expense Summary</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: black;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 16px;
+            text-align: left;
+        }
+
+        th {
+            background-color: blue;
+            color: #fff;
+            font-weight: bold;
+            font-size:18px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+            margin-right: 10px;
+            transition: color 0.3s ease-in-out;
+        }
+
+        a:hover {
+            color: #0056b3;
+        }
+
+        form {
+            display: inline;
+        }
+
+        .add-goal-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .add-goal-link:hover {
+            background-color: #218838;
+        }
+        select,
+        input,
+        button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        input:hover{
+            cursor: pointer;
+            }
+
+        input:focus{
+             box-shadow: 0 0  5px #0f0, 0 0 10px #0f0, 0 0 15px #0f0;
+            }
+
+        .ttl-ex{
+            font-size: 20px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        }
+    </style>
+</head>
+<body>
+
+    <h1>General Expense Summary </h1><br>
+
+    <table class="table table-hover table-striped">
+        <thead >
+            <tr>
+                <th>Crop Expenses</th>
+                <th>Livestock Expenses</th>
+                <th>Other Expenses</th>
+                <th>Employee Salary</th>
+                <th>Total Expenses</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ total_crop_expenses }}</td>
+                <td>{{ total_livestock_expenses }}</td>
+                <td>{{ total_other_expenses }}</td>
+                <td>{{ total_amount_paid }}</td>
+                <td>{{ total_expense }}</td>
+        </tbody>
+    </table><br><br>
+    <div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <div class="container mt-5">
+            <h1 class="text-center">Farm Expenses</h1>
+            <canvas id="myChart" width="400" height="200"></canvas>
+        </div>
+
+        <script>
+            var ctx = document.getElementById('myChart').getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['crop expenses','livestock expenses','other expenses', 'employee salary'],
+                        datasets: [{
+                            label: '%',
+                            data: [{{ total_crop_expenses }}, {{ total_livestock_expenses }}, {{ total_other_expenses}}, {{ total_amount_paid}}],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+                </script>
+    </div>
+</body>
+<a href="{% url 'detailed_crop_expense' %}" class="btn btn-secondary">Detailed Crop Expenses</a>
+<a href="" class="btn btn-secondary">Detailed Livestock Expenses</a>
+<a href="" class="btn btn-secondary">Detailed Other Expenses</a>
+{% endblock content %}

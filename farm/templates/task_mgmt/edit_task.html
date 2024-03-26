@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Task Details</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: black;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h2 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size:35px;
+        }
+        p{
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 30px;
+            font-size:15px;
+        }
+
+        form {
+            max-width: 500px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.5); /* Add a semi-transparent white background for better readability */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: black;
+            text-align: left;
+            font-weight:bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            height: 40px
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease-in-out;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .alert {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+
+        .alert ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .alert li {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Edit goal details</h2>
+    <form method="post" action="{% url 'edit_task'  task.task_id %}">
+        {% csrf_token %}
+
+        <!-- Display form errors -->
+        {% if task_form.errors %}
+            <div class="alert">
+                <strong>Error(s):</strong>
+                <ul>
+                    {% for error in task_form.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        {{ task_form.as_p }}
+        <button type="submit">Update</button>
+    </form>
+
+</body>
+</html>

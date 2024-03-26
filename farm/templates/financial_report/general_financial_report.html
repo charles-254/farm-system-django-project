@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+{%  extends 'farm/base_dashboard.html' %}
+{% block content%}
+<html>
+
+<head>
+    <title>Financial Report </title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: black;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 16px;
+            text-align: left;
+        }
+
+        th {
+            background-color: blue;
+            color: #fff;
+            font-weight: bold;
+            font-size:18px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+            margin-right: 10px;
+            transition: color 0.3s ease-in-out;
+        }
+
+        a:hover {
+            color: #0056b3;
+        }
+
+        form {
+            display: inline;
+        }
+
+        .add-goal-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .add-goal-link:hover {
+            background-color: #218838;
+        }
+        select,
+        input,
+        button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        input:hover{
+            cursor: pointer;
+            }
+
+        input:focus{
+             box-shadow: 0 0  5px #0f0, 0 0 10px #0f0, 0 0 15px #0f0;
+            }
+
+        .ttl-ex{
+            font-size: 20px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Finacial Report </h1><br>
+
+    <table class="table table-hover table-striped">
+        <thead >
+            <tr>
+                <th>Total Sales</th>
+                <th>Total Expenses</th>
+                <th>Net Benefit</th>
+                <th>Outcome</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ total_sale }}</td>
+                <td>{{ total_expense }}</td>
+                <td>{{ net_benefit }}</td>
+                <td>{{ profit_loss }}</td>
+        </tbody>
+    </table><br><br>
+
+</body>
+<p class="text text-info ttl-ex" >Total Sales = ksh.{{total_sale}}</p>
+<p class="text text-info ttl-ex" >Total Expenses = ksh.{{total_expense}}</p><br>
+<p class="text text-info ttl-ex" >Total Crop Expenses = ksh.{{total_crop_expenses}}</p>
+<p class="text text-info ttl-ex" >Total Crop Sales = ksh.{{total_crop_sales}}</p><br>
+<p class="text text-info ttl-ex" >Total Livestock Expenses = ksh.{{total_livestock_expenses}}</p>
+<p class="text text-info ttl-ex" >Total Livestock Sales = ksh.{{total_livestock_sales}}</p><br>
+<p class="text text-info ttl-ex" >Total Other Expenses = ksh.{{total_other_expenses}}</p>
+<p class="text text-info ttl-ex" >Total Other Sales = ksh.{{total_other_sales}}</p><br>
+<p class="text text-info ttl-ex" >Total Amount Paid To Employees = ksh.{{total_amount_paid}}</p>
+
+
+</html>
+{% endblock content%}

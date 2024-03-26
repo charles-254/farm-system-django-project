@@ -1,0 +1,24 @@
+{% extends 'farm/base_dashboard.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<a href="{% url 'payment-status' %}" class="btn btn=outline-primary my-3 mx-4">Go Back</a>
+<div class="row">
+    <div class="cil-11 col-md-4 mx-auto mt-5">
+        <h3>Confirm payment of ksh.{{employee.salary}} to {{employee.name}}</h3>
+        <p class="fw-light">For subraction of unpaid months, it will be done automatically</p>
+
+        <form method="POST" >
+            {% csrf_token %}
+            {{ form|crispy}}
+
+            <div class="mt-3">
+                <button class="btn btn-primary">Confirm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}
+
+{ endblock statement }
