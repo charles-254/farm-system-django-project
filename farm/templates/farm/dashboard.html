@@ -2,6 +2,10 @@
 {% load static %}
 {% block content %}
 <style>
+    bodY{
+        background: black;
+    }
+
     #dash{
         position: absolute;
         left: 20;
@@ -21,7 +25,7 @@
     <div class="row" id="dash">
         <div class="col-md-2" style="border-right: 3px solid #ddd;">
             <img src="{% static 'images/login.png' %}" alt="icon image" class="img-fluid" id="icon_img"><br>
-            <p class="text text-info">Username:{{username}}</p>
+            <a href="{% url 'account_details' %}" class="text text-info">Username:{{username}}</a>
             <a href="{% url 'index' %}" class="btn btn-secondary">Home</a><br>
             <a href="{% url 'employee-view' %}" class="btn btn-secondary my-2">Employee Management</a>
             <a href="{% url 'crop_list' %}" class="btn btn-secondary">Crop Management</a>

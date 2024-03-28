@@ -1,12 +1,25 @@
 {% extends 'farm/base_dashboard.html' %}
 
 {% block content %}
+
 <style>
-    .pa{
-        justify-content:center;
+    body{
+        background: black;
     }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 16px;
+        ext-align: left;
+    }
+
+    th {
+        background-color: rgb(240,50,50);
+        color: #fff;
+        font-weight: bold;
+        }
+
 </style>
-<h3 class="col-md-5 mx-auto mt-2">Payment Records</h3>
+<h3 class="col-md-5 mx-auto mt-2" style="color:blue;">Payment Records</h3>
 <div class="row">
     <div class="col-md-2" style="border-right: 3px solid #ddd;">
         <a href="{% url 'dashboard' %}"><button class="btn btn-link">dashboard</button></a>
@@ -21,7 +34,7 @@
                    <th scope="col">ID</th>
                    <th scope="col">Salary</th>
                    <th scope="col">payment date</th>
-                   <th scope="col"></th>
+
 
                </tr>
            </thead>
@@ -32,7 +45,7 @@
                        <td>-</td>
                        <td>-</td>
                        <td>-</td>
-                       <td></td>
+
 
                    </tr>
                {% endif %}

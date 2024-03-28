@@ -84,11 +84,50 @@
             text-align: left;
         }
 
+
+        .neon {
+            background-color: rgba(0, 255, 0, 0.2); /* Neon green with 50% opacity */
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5); /* Neon green glow */
+            text-align:center;
+            height:45px
+
+
+        }
+        .txt{
+            font-size: 20px;
+            text-decoration: none;
+            color:blue;
+
+        }
+        .txt:hover{
+            color:gray
+
         }
     </style>
 </head>
 <body>
+    <div class="neon">
+        <a class="txt" href="{% url 'dashboard' %}">Dashboard |&nbsp</a>
 
+        <a class="txt" href="{% url 'crop_list' %}">Crops |&nbsp</a>
+
+        <a class="txt" href="{% url 'livestock_list' %}">Livestock |&nbsp</a>
+
+        <a class="txt" href="{% url 'expense_list' %}">Expenses |&nbsp</a>
+
+         <a class="txt" href="{% url 'sale_list' %}">Sales |&nbsp</a>
+
+        <a class="txt" href="{% url 'general_expense_summary' %}">Expenses summary |&nbsp</a>
+
+        <a class="txt" href="{% url 'general_sale_summary' %}">Sales Summary |&nbsp</a>
+
+        <a class="txt" href="{% url 'general_financial_report' %}">Financial report |&nbsp</a>
+
+        <a class="txt" href="{% url 'task_list' %}">Tasks |&nbsp</a>
+
+        <a class="txt" href="{% url 'goal_list' %}">Goals |&nbsp</a>
+
+    </div>
     <h1>General Sale Summary </h1><br>
 
     <table class="table table-hover table-striped">
@@ -149,4 +188,7 @@
                 </script>
     </div>
 </body>
+<a href="{% url 'detailed_crop_sale' %}" class="btn btn-success">Detailed Crop Expenses</a>
+<a href="{% url 'detailed_livestock_sale' %}" class="btn btn-success">Detailed Livestock Expenses</a>
+<a href="{% url 'detailed_other_sale' %}" class="btn btn-success">Detailed Other Expenses</a>
 {% endblock content %}

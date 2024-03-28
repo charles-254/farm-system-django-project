@@ -8,6 +8,7 @@ from django.db.models import Sum, Avg
 from .forms import *
 from .models import *
 from datetime import date
+from django.contrib.auth.views import PasswordChangeView
 
 class Index(TemplateView):
     template_name = 'farm/index.html'
@@ -69,14 +70,23 @@ class Dashboard(LoginRequiredMixin,View):
         total_livestock_sales = sum(sale.total_amount for sale in livestock_sales)
         total_other_sales = sum(sale.total_amount for sale in other_sales)
 
-        percent_crop_exp = total_crop_expenses/total_expense * 100
-        percent_livestock_exp = total_livestock_expenses/total_expense * 100
-        percent_other_exp = total_other_expenses/total_expense * 100
-        percent_employee_salary = total_amount_paid/total_expense * 100
+        try:
+            percent_crop_sales = total_crop_sales / total_sale * 100
+            percent_livestock_sales = total_livestock_sales / total_sale * 100
+            percent_other_sales = total_other_sales / total_sale * 100
+            percent_crop_exp = total_crop_expenses/total_expense * 100
+            percent_livestock_exp = total_livestock_expenses/total_expense * 100
+            percent_other_exp = total_other_expenses/total_expense * 100
+            percent_employee_salary = total_amount_paid/total_expense * 100
 
-        percent_crop_sale = total_crop_sales / total_sale * 100
-        percent_livestock_sale = total_livestock_sales / total_sale * 100
-        percent_other_sales = total_other_sales / total_sale * 100
+        except ZeroDivisionError:
+            percent_crop_exp = 0
+            percent_livestock_exp = 0
+            percent_other_exp = 0
+            percent_crop_sales = 0
+            percent_livestock_sales = 0
+            percent_other_sales = 0
+            percent_employee_salary = 0
 
         context = {
             'employees': employees,
@@ -91,8 +101,8 @@ class Dashboard(LoginRequiredMixin,View):
             'percent_livestock_exp ': percent_livestock_exp,
             'percent_other_exp': percent_other_exp,
             'percent_employee_salary': percent_employee_salary,
-            'percent_livestock_sales': percent_livestock_sale,
-            'percent_crop_sales': percent_crop_sale,
+            'percent_livestock_sales': percent_livestock_sales,
+            'percent_crop_sales': percent_crop_sales,
             'percent_other_sales': percent_other_sales
 
         }
@@ -122,7 +132,7 @@ def custom_logout(request):
     logout(request)
     return render(request, 'farm/logout.html')
 
-#***************************  E M P L O Y E E   M A N A G E M E N T  *******************************
+# ***************************  E M P L O Y E E   M A N A G E M E N T  *******************************
 
 class EmployeeView(LoginRequiredMixin,View):
     def get(self, request):
@@ -251,7 +261,6 @@ class MakePayments(LoginRequiredMixin, UpdateView):
 
 class PaymentRecordsView(LoginRequiredMixin, View):
     def get(self, request):
-        # Filter PaymentRecords based on the related Employee's user field
         payment_records = PaymentRecords.objects.filter(employee_id__user_id=request.user.id).order_by('employee_id')
         #total_amount_paid = TotalAmountPaid.objects.aggregate(total=sum('total_amount'))['total'] or 0
         amounts = TotalAmountPaid.objects.all()
@@ -259,7 +268,7 @@ class PaymentRecordsView(LoginRequiredMixin, View):
         print(payment_records)
         return render(request, 'employee_mgmt/payment_records.html', {"payment_records": payment_records, 'total_amount_paid': total_amount_paid})
 
-#***************************  C R O P   M A N A G E M E N T  *******************************
+# ***************************  C R O P   M A N A G E M E N T  *******************************
 def crop_list(request):
     crops = Crop.objects.filter(user=request.user).all()
     return render(request, 'crop_mgmt/crop_list.html', {'crops': crops})
@@ -306,7 +315,7 @@ def harvest_crop(request, crop_id):
         crop_harvestedform = CropHarvestedForm(request.POST, instance=crop)
     return render(request, 'crop_mgmt/harvest_crop.html', {'crop_harvestedform': crop_harvestedform, 'crop': crop})
 
-#***************************  L I V E S T O C K   M A N A G E M E N T  *******************************
+# ***************************  L I V E S T O C K   M A N A G E M E N T  *******************************
 def livestock_list(request):
     livestocks = Livestock.objects.filter(user=request.user).all()
     return render(request, 'livestock_mgmt/livestock_list.html', {'livestocks': livestocks})
@@ -340,7 +349,7 @@ class DeleteLivestock(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('livestock_list')
     context_object_name = 'livestock'
 
-#***************************  G O A L   M A N A G E M E N T  *******************************
+# ***************************  G O A L   M A N A G E M E N T  *******************************
 
 def goal_list(request):
     goals = Goal.objects.filter(user=request.user).all()
@@ -404,7 +413,7 @@ def achieved_goal(request):
             achieved_goals.append(goal)
     return render(request, 'goal_mgmt/achieved_goal.html', {'achieved_goals': achieved_goals})
 
-#***************************  T A S k   M A N A G E M E N T  *******************************
+# ***************************  T A S k   M A N A G E M E N T  *******************************
 
 def task_list(request):
     tasks = Task.objects.filter(user=request.user).all()
@@ -468,7 +477,7 @@ def complete_task(request, task_id):
         task_completionform = TaskCompletionForm(instance=task)
     return render(request, 'task_mgmt/complete_task.html', {'task_completionform': task_completionform, 'task': task})
 
-#***************************  S A L E   M A N A G E M E N T  *******************************
+# ***************************  S A L E   M A N A G E M E N T  *******************************
 
 def sale_list(request):
     category = request.GET.get('category')
@@ -528,31 +537,7 @@ class DeleteSale(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('sale_list')
     context_object_name = 'sale'
 
-def crop_sale(request):
-    sales = Sale.objects.filter(user=request.user).all()
-    crop_sales = []
-    for sale in sales:
-        if sale.category == 'crop':
-            crop_sales.append(sale)
-    return render(request, 'sale_mgmt/crop_sale.html', {'crop_sales': crop_sales})
-
-def livestock_sale(request):
-    sales = Sale.objects.filter(user=request.user).all()
-    livestock_sales = []
-    for sale in sales:
-        if sale.category == 'livestock':
-            livestock_sales.append(sale)
-    return render(request, 'sale_mgmt/livestock_sale.html', {'livestock_sales': livestock_sales})
-
-def other_sale(request):
-    sales = Sale.objects.filter(user=request.user).all()
-    other_sales = []
-    for sale in sales:
-        if sale.category == 'other':
-            other_sales.append(sale)
-    return render(request, 'sale_mgmt/other_sale.html', {'other_sales': other_sales})
-
-#***************************  E X P E N S E   M A N A G E M E N T  *******************************
+# ***************************  E X P E N S E   M A N A G E M E N T  *******************************
 
 def expense_list(request):
     category = request.GET.get('category')
@@ -613,7 +598,7 @@ class DeleteExpense(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('expense_list')
     context_object_name = 'expense'
 
-#************************** S U M M A R Y    R E P O R T S ************************
+# ************************** S U M M A R Y    R E P O R T S *******************************
 
 def financial_general_report(request):
     total_expense_cost = Expense.objects.filter(user=request.user).aggregate(total_expenses=models.Sum('cost'))[
@@ -692,10 +677,17 @@ def general_expense_summary(request):
     total_amount_paid = sum(amount.total_amount for amount in amounts)
     total_expense = total_expense_cost + total_amount_paid
 
-    percent_crop_exp = total_crop_expenses/total_expense * 100
-    percent_livestock_exp = total_livestock_expenses/total_expense * 100
-    percent_other_exp = total_other_expenses/total_expense * 100
-    percent_employee_salary = total_amount_paid/total_expense * 100
+    try:
+        percent_crop_exp = total_crop_expenses/total_expense * 100
+        percent_livestock_exp = total_livestock_expenses/total_expense * 100
+        percent_other_exp = total_other_expenses/total_expense * 100
+        percent_employee_salary = total_amount_paid/total_expense * 100
+
+    except ZeroDivisionError:
+        percent_crop_exp = 0
+        percent_livestock_exp = 0
+        percent_other_exp = 0
+        percent_employee_salary = 0
 
     context = {
         'total_expense': total_expense,
@@ -715,20 +707,84 @@ def general_expense_summary(request):
 def detailed_crop_expense(request):
     expenses = Expense.objects.filter(user=request.user).all()
     crop_expenses = []
-    expense_names = []
+    crop_expense_names = []
     for expense in expenses:
         if expense.category == 'crop':
             crop_expenses.append(expense)
-            expense_names.append(expense.expense_name)
-    print(expense_names)
-    detail = []
-    for name in expense_names:
-        detail.append(Expense.objects.filter(expense_name=name))
+            crop_expense_names.append(expense.expense_name)
+    expense_types = []
+    for name in crop_expense_names:
+        if name not in expense_types:
+            expense_types.append(name)
 
-    print(detail)
-    print(len(detail))
-    return render(request, 'expense_summary/detailed_crop_expense_summary.html')
+    total_amount = sum(expense.cost for expense in crop_expenses)
+    expense_by_type = [expenses.filter(expense_name=expense_type).aggregate(total=models.Sum('cost'))['total'] or 0 for expense_type in expense_types]
+    expense_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in expense_by_type]
+    print(expense_types)
+    print(expense_by_type)
+    print(expense_distribution)
+    context = {
+        'crop_expenses': crop_expenses,
+        'expense_types': expense_types,
+        'expense_by_type': expense_by_type,
+        'expense_distribution': expense_distribution,
+    }
+    return render(request, 'expense_summary/detailed_crop_expense_summary.html', context)
 
+def detailed_livestock_expenses( request):
+    expenses = Expense.objects.filter(user=request.user)
+    livestock_expenses = []
+    livestock_expense_names = []
+    for expense in expenses:
+        if expense.category == 'livestock':
+            livestock_expenses.append(expense)
+            livestock_expense_names.append(expense.expense_name)
+    expense_types = []
+    for name in livestock_expense_names:
+        if name not in expense_types:
+            expense_types.append(name)
+    print(livestock_expenses)
+    print(livestock_expense_names)
+    print(expense_types)
+    total_amount = sum(expense.cost for expense in livestock_expenses)
+    expense_by_type = [expenses.filter(expense_name=expense_type).aggregate(total=models.Sum('cost'))['total'] or 0 for expense_type in expense_types]
+    expense_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in expense_by_type]
+
+    context = {
+        'livestock_expenses': livestock_expenses,
+        'expense_types': expense_types,
+        'expense_by_type': expense_by_type,
+        'expense_distribution': expense_distribution,
+    }
+    return render(request, 'expense_summary/detailed_livestock_expense_summary.html', context)
+
+
+def detailed_other_expense(request):
+    expenses = Expense.objects.filter(user=request.user)
+    other_expenses = []
+    other_expense_names = []
+    for expense in expenses:
+        if expense.category == 'other':
+            other_expenses.append(expense)
+            other_expense_names.append(expense.expense_name)
+    expense_types = []
+    for name in other_expense_names:
+        if name not in expense_types:
+            expense_types.append(name)
+
+    total_amount = sum(expense.cost for expense in other_expenses)
+    expense_by_type = [expenses.filter(expense_name=expense_type).aggregate(total=models.Sum('cost'))['total'] or 0 for
+                       expense_type in expense_types]
+    expense_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in
+                            expense_by_type]
+
+    context = {
+        'other_expenses': other_expenses,
+        'expense_types': expense_types,
+        'expense_by_type': expense_by_type,
+        'expense_distribution': expense_distribution,
+    }
+    return render(request, 'expense_summary/detailed_other_expense_summary.html', context)
 
 def general_sale_summary(request):
     sales = Sale.objects.filter(user=request.user)
@@ -747,10 +803,15 @@ def general_sale_summary(request):
     total_other_sales = sum(sale.total_amount for sale in other_sales)
     total_sale = Sale.objects.filter(user=request.user).aggregate(total_sales=models.Sum('total_amount'))[
                         'total_sales'] or 0
+    try:
+        percent_crop_sale = total_crop_sales/total_sale * 100
+        percent_livestock_sale = total_livestock_sales/total_sale * 100
+        percent_other_sales = total_other_sales/total_sale * 100
 
-    percent_crop_sale = total_crop_sales/total_sale * 100
-    percent_livestock_sale = total_livestock_sales/total_sale * 100
-    percent_other_sales = total_other_sales/total_sale * 100
+    except ZeroDivisionError:
+        percent_crop_sale = 0
+        percent_other_sales = 0
+        percent_livestock_sale = 0
 
     context = {
         'total_sale': total_sale,
@@ -762,3 +823,144 @@ def general_sale_summary(request):
         'percent_other_sales': percent_other_sales
     }
     return render(request, 'sale_summary/general_sale_summary.html', context)
+
+def detailed_crop_sale(request):
+    sales = Sale.objects.filter(user=request.user).all()
+    crop_sales = []
+    crop_sales_names = []
+    for sale in sales:
+        if sale.category == 'crop':
+            crop_sales.append(sale)
+            crop_sales_names.append(sale.product_name)
+    product_types = []
+    for name in crop_sales_names:
+        if name not in product_types:
+            product_types.append(name)
+
+    total_amount = sum(sale.total_amount for sale in crop_sales)
+    sale_by_type = [sales.filter(product_name=product_type).aggregate(total=models.Sum('total_amount'))['total'] or 0 for product_type in product_types]
+    sale_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in sale_by_type]
+    print(product_types)
+    print(sale_by_type)
+    print(sale_distribution)
+    context = {
+        'crop_sales': crop_sales,
+        'product_types': product_types,
+        'sale_by_type': sale_by_type,
+        'sale_distribution': sale_distribution,
+    }
+    return render(request, 'sale_summary/detailed_crop_sale_summary.html', context)
+
+def detailed_livestock_sale(request):
+    sales = Sale.objects.filter(user=request.user).all()
+    livestock_sales = []
+    livestock_sales_names = []
+    for sale in sales:
+        if sale.category == 'livestock':
+            livestock_sales.append(sale)
+            livestock_sales_names.append(sale.product_name)
+    product_types = []
+    for name in livestock_sales_names:
+        if name not in product_types:
+            product_types.append(name)
+
+    total_amount = sum(sale.total_amount for sale in livestock_sales)
+    sale_by_type = [sales.filter(product_name=product_type).aggregate(total=models.Sum('total_amount'))['total'] or 0 for product_type in product_types]
+    sale_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in sale_by_type]
+    print(product_types)
+    print(sale_by_type)
+    print(sale_distribution)
+    context = {
+        'livestock_sales': livestock_sales,
+        'product_types': product_types,
+        'sale_by_type': sale_by_type,
+        'sale_distribution': sale_distribution,
+    }
+    return render(request, 'sale_summary/detailed_livestock_sale_summary.html', context)
+
+def detailed_other_sale(request):
+    sales = Sale.objects.filter(user=request.user).all()
+    other_sales = []
+    other_sales_names = []
+    for sale in sales:
+        if sale.category == 'other':
+            other_sales.append(sale)
+            other_sales_names.append(sale.product_name)
+    product_types = []
+    for name in other_sales_names:
+        if name not in product_types:
+            product_types.append(name)
+
+    total_amount = sum(sale.total_amount for sale in other_sales)
+    sale_by_type = [sales.filter(product_name=product_type).aggregate(total=models.Sum('total_amount'))['total'] or 0 for product_type in product_types]
+    sale_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in sale_by_type]
+    print(product_types)
+    print(sale_by_type)
+    print(sale_distribution)
+    context = {
+        'other_sales': other_sales,
+        'product_types': product_types,
+        'sale_by_type': sale_by_type,
+        'sale_distribution': sale_distribution,
+    }
+    return render(request, 'sale_summary/detailed_other_sale_summary.html', context)
+
+# ***************************** A C C O U N T   M A N A G E M E N T *************************
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        username = request.POST.get('username')
+        try:
+            user = User.objects.get(email=email, username=username)
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            if new_password == confirm_password:
+                user.set_password(new_password)
+                user.save()
+                return redirect('password_reset_done')
+            else:
+                messages.error(request, 'Passwords do not match.')
+                return render(request, 'account_mgmt/forgot_password.html')
+        except User.DoesNotExist:
+            messages.error(request,  "User with this email and username does not exist.")
+            return render(request, 'account_mgmt/forgot_password.html', )
+    return render(request, 'account_mgmt/forgot_password.html')
+
+class PasswordResetDoneView(TemplateView):
+    template_name = 'account_mgmt/password_reset_done.html'
+
+def account_details(request):
+    user_details = User.objects.filter(id=request.user.id).all()
+    return render(request, 'account_mgmt/account_details.html', {'user_details': user_details})
+
+class EditAccountDetails(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = EditAccountDetailsForm
+    template_name = 'account_mgmt/edit_account_details.html'
+    success_url = reverse_lazy('account_details')
+
+    def get_object(self, queryset=None):
+        return User.objects.get(id=self.request.user.id)
+
+class ChangePassword(PasswordChangeView):
+    template_name = 'account_mgmt/change_password.html'
+    success_url = reverse_lazy('password_change_done')
+
+class PasswordChangeDone(TemplateView):
+    template_name = 'account_mgmt/password_change_done.html'
+
+def delete_account(request):
+    if request.method == 'POST':
+        delete_form = DeleteAccountForm(request.POST)
+        if request.user.is_authenticated:
+            if delete_form.is_valid():
+                request.user.delete()
+                logout(request)
+                return redirect('signup')
+            return render(request, 'account_mgmt/delete_account.html', )
+        return redirect('login')
+    return render(request, 'account_mgmt/delete_account.html')
+
+class AccountDeletionDone(TemplateView):
+    template_name = 'account_mgmt/account_deletion_done.html'

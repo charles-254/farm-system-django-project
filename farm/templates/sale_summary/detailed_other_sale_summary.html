@@ -4,7 +4,7 @@
 <html>
 
 <head>
-    <title>General Expense Summary</title>
+    <title>General sale Summary</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -89,43 +89,48 @@
 </head>
 <body>
 
-    <h1>Expenses  Summary </h1><br>
+    <h1>Other Sale Summary </h1><br>
 
     <table class="table table-hover table-striped">
         <thead >
             <tr>
-                <th style="background: rgb(0,100,0);">Expense name</th>
-                <th style="background: rgb(0,100,0);">Description</th>
-                <th style="background: rgb(0,100,0);">cost</th>
-                <th style="background: rgb(0,100,0);">date</th>
+                <th style="background: rgb(0,100,0);"> Product Name</th>
+                <th style="background: rgb(0,100,0);">Quantity</th>
+                <th style="background: rgb(0,100,0);">Unit Price</th>
+                <th style="background: rgb(0,100,0);">Total Amount</th>
+                <th style="background: rgb(0,100,0);">Date</th>
             </tr>
         </thead>
         <tbody>
-            {% for expense in crop_expenses %}
+            {% for sale in other_sales %}
             <tr>
-                <td>{{ expense.expense_name }}</td>
-                <td>{{ expense.description }}</td>
-                <td>{{ expense.cost }}</td>
-                <td>{{ expense.date }}</td>
+                <td>{{ sale.product_name}}</td>
+                <td>{{ sale.quantity }}</td>
+                <td>{{ sale.unit_price }}</td>
+                <td>{{ sale.total_amount }}</td>
+                <td>{{ sale.date}}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table><br>
-    <h1>Summary By Expense Types </h1><br>
+    <h1>Summary By Product Types </h1><br>
 
     <table class="table table-hover table-striped">
         <thead >
             <tr>
-                <th style="background: rgb(0,100,0);">Expense Type</th>
-                <th style="background: rgb(0,100,0);">Total Cost</th>
+                <th style="background: rgb(0,100,0);">Product Type</th>
+                <th style="background: rgb(0,100,0);">Total Sales</th>
             </tr>
         </thead>
         <tbody>
-            {% for iteam in expense_types %}
+            {% for product in product_types %}
             <tr>
-                <td>{{ type }}</td>
-                <td>{{ total_expense }}</td>
-                <td>{{ total_expense }}</td>
+                <td>{{ product }}</td>
+            </tr>
+            {% endfor %}
+            {% for total_sales in sale_by_type %}
+            <tr>
+                <td>{{ total_sales }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -133,27 +138,26 @@
     <div>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <div class="container mt-5">
-            <h1 class="text-center">Crop Expenses Graph</h1>
+            <h1 class="text-center">Other Products Graph</h1>
             <canvas id="myChart" width="400" height="200"></canvas>
         </div>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                var expenseTypes = {{ expense_types|safe }};
-                var expensesByType = {{ expenses_by_type|safe }};
-                var expenseDistribution = {{ expense_distribution|safe }};
+                var productTypes = {{ product_types|safe }};
+                var salesByType = {{ sale_by_type|safe }};
+                var saleDistribution = {{ sale_distribution|safe }};
 
-                // Convert expensesByType to an array of floats
-                var expensesByTypeData = expensesByType.map(parseFloat);
+                var saleByTypeData = salesByType.map(parseFloat);
 
                 var ctx = document.getElementById('myChart').getContext('2d');
                     var myChart = new Chart(ctx, {
                         type: 'bar',
                         data: {
-                            labels: expenseTypes,
+                            labels: productTypes,
                             datasets: [{
                                 label: '%',
-                                data: expenseDistribution,
+                                data: saleDistribution,
                                 backgroundColor: [
                                     'rgba(255, 99, 132, 0.2)',
                                     'rgba(54, 162, 235, 0.2)',

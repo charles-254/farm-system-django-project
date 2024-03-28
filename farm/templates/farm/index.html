@@ -1,11 +1,22 @@
 {% extends 'farm/base.html' %}
-
+{% load static %}
 {% block content %}
+<style>
+    body {
+        background: url("{% static 'farm5.avif' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100vh;
+
+    }
+z
+</style>
 <div>
     <div class="row">
         <div class="col-sm-11 col-md-5 mx-auto mt-5">
-            <h1 class="fw-light">Track and manage your farm</h1>
-            <p class="fw-light"> Keep track of your farm activities, income and expenses </p>
+            <h1 class="fw-dark ">Welcome to your data playground and information oasis</h1>
+            <p class="fw-dark "> Keep track of your farm activities, income and expenses </p>
             <div>
                 <a href="{% url 'dashboard'%}" class="btn btn-primary"> Get Started Now</a>
             </div>

@@ -89,7 +89,7 @@
 </head>
 <body>
 
-    <h1>Expenses  Summary </h1><br>
+    <h1> Livestock Expenses  Summary </h1><br>
 
     <table class="table table-hover table-striped">
         <thead >
@@ -101,7 +101,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for expense in crop_expenses %}
+            {% for expense in livestock_expenses %}
             <tr>
                 <td>{{ expense.expense_name }}</td>
                 <td>{{ expense.description }}</td>
@@ -121,10 +121,9 @@
             </tr>
         </thead>
         <tbody>
-            {% for iteam in expense_types %}
+            {% for type in expense_types %}
             <tr>
                 <td>{{ type }}</td>
-                <td>{{ total_expense }}</td>
                 <td>{{ total_expense }}</td>
             </tr>
             {% endfor %}
@@ -133,7 +132,7 @@
     <div>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <div class="container mt-5">
-            <h1 class="text-center">Crop Expenses Graph</h1>
+            <h1 class="text-center">Livestock Expenses Graph</h1>
             <canvas id="myChart" width="400" height="200"></canvas>
         </div>
 

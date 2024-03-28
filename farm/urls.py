@@ -48,9 +48,6 @@ urlpatterns = [
     path('add_sale/', add_sale, name='add_sale'),
     path('edit_sale/<int:sale_id>/', edit_sale, name='edit_sale'),
     path('delete_sale/<int:pk>', DeleteSale.as_view(), name='delete_sale'),
-    path('livestock_sale', livestock_sale, name='livestock_sale'),
-    path('crop_sale', crop_sale, name='crop_sale'),
-    path('other_sale', other_sale, name='other_sale'),
 
     path('expenses/', expense_list, name='expense_list'),
     path('add_expense/', add_expense, name='add_expense'),
@@ -60,7 +57,20 @@ urlpatterns = [
     path('general_financial_report', financial_general_report, name='general_financial_report'),
     path('general_expense_summary', general_expense_summary, name='general_expense_summary'),
     path('expense_summary/detailed_crop_expense', detailed_crop_expense, name='detailed_crop_expense'),
-    path('general_sale_summary', general_sale_summary, name='general_sale_summary')
+    path('expense_summary/detailed_livestock_expense', detailed_livestock_expenses, name='detailed_livestock_expense'),
+    path('expense_summary/detailed_other_expense', detailed_other_expense, name='detailed_other_expense'),
 
+    path('general_sale_summary', general_sale_summary, name='general_sale_summary'),
+    path('detailed_crop_sale', detailed_crop_sale, name='detailed_crop_sale'),
+    path('detailed_livestock_sales', detailed_livestock_sale, name='detailed_livestock_sale'),
+    path('detailed_other_sale', detailed_other_sale, name='detailed_other_sale'),
+
+    path('forgot_password', forgot_password, name='forgot_password'),
+    path('password_reset_done', PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('account_details', account_details, name='account_details'),
+    path('edit_account_details', EditAccountDetails.as_view(), name='edit_account_details'),
+    path('change_password', ChangePassword.as_view(), name='change_password'),
+    path('password_change_done', PasswordChangeDone.as_view(), name='password_change_done'),
+    path('delete_account', delete_account, name='delete_account')
 
 ]

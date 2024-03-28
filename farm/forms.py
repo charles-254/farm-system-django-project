@@ -75,12 +75,30 @@ class SaleForm(forms.ModelForm):
         fields = ['category', 'product_name', 'quantity', 'unit_price', 'date', 'notes']
 
     def __init__(self, *args, **kwargs):
-        super(SaleForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-        categories = ['crop', 'livestock', 'other'] #oher to hold sale not related to farm product eg sellin equipments
+        categories = category.objects.all() #oher to hold sale not related to farm product eg sellin equipments
         self.fields['category'].queryset = categories
 
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = Expense
         fields = ['category', 'expense_name', 'description', 'cost', 'date']
+
+class EditAccountDetailsForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance')
+        if instance:
+            kwargs['initial'] = {
+
+            }
+        super().__init__(*args, **kwargs)
+
+class DeleteAccountForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = []

@@ -1,6 +1,20 @@
 {% extends "farm/base.html" %}
 {% load crispy_forms_tags%}
+{% load static %}
 {% block content%}
+<style>
+     body {
+        background: url("{% static 'farm6.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100;
+    }
+    label{
+        color: white;
+        font-weight: bold;
+    }
+</style>
 <div class="row">
     <div class="col-11 col-md-4 mx-auto mt-5">
         <h1>Sign Up</h1>
@@ -26,7 +40,7 @@
             <button class="btn btn-primary" type="submit">Sign Up</button>
         </form>
         <div class="pt-3">
-            <small class="text-muted"> Already have an account? <a href="{% url 'login' %}" class="ml-2">Log in</a></small>
+            <p>  Already have an account? <a href="{% url 'login' %}" class="text-info ml-2">Log in</a></p>
         </div>
     </div>
 </div>

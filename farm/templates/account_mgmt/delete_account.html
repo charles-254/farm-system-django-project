@@ -1,0 +1,23 @@
+{% extends 'farm/base.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<style>
+     body {
+        background: black;
+    }
+</style>
+<div class="row">
+    <div class="col-11 col-md-4 mx-auto mt-5">
+        <h1>Delete Account ?</h1>
+        <p class="fw-light">This cannot be undone</p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            {{ delete_form.as_p }}
+            <button class="btn btn-danger">Delete</button>
+            <a href="{% url 'account_details' %}" class="btn btn-danger">Cancel</a>
+        </form>
+
+    </div>
+</div>
+{% endblock content%}

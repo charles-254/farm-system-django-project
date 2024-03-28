@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livestock Details</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: black;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* Updated to vertical direction */
+            height: 100vh;
+        }
+
+        h2 {
+            text-align: center;
+            color: #ffff;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+
+            color: #fff;
+        }
+
+        td {
+            background-color: grey;
+            color: #55;
+        }
+        .neon {
+            background-color: rgba(0, 255, 0, 0.2); /* Neon green with 50% opacity */
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5); /* Neon green glow */
+            text-align:center;
+            height:45px
+
+
+        }
+        .txt{
+            font-size: 20px;
+            text-decoration: none;
+            color:blue;
+
+        }
+        .txt:hover{
+            color:gray
+
+        }
+        .al {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .al:hover {
+            background-color: #218838;
+        }
+        .al-d{
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgb(240, 20, 20);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .al-d:hover{
+            background-color: rgb(140,0,0)
+        }
+    </style>
+</head>
+<body>
+    <div class="neon">
+        <a class="txt" href="{% url 'dashboard' %}">Dashboard |&nbsp</a>
+
+        <a class="txt" href="{% url 'crop_list' %}">Crops |&nbsp</a>
+
+        <a class="txt" href="{% url 'livestock_list' %}">Livestock |&nbsp</a>
+
+        <a class="txt" href="{% url 'expense_list' %}">Expenses |&nbsp</a>
+
+         <a class="txt" href="{% url 'sale_list' %}">Sales |&nbsp</a>
+
+        <a class="txt" href="{% url 'general_expense_summary' %}">Expenses summary |&nbsp</a>
+
+        <a class="txt" href="{% url 'general_sale_summary' %}">Sales Summary |&nbsp</a>
+
+        <a class="txt" href="{% url 'general_financial_report' %}">Financial report |&nbsp</a>
+
+        <a class="txt" href="{% url 'task_list' %}">Tasks |&nbsp</a>
+
+        <a class="txt" href="{% url 'goal_list' %}">Goals |&nbsp</a>
+
+    </div>
+    <h2>Account Details</h2>
+
+    <table border="1">
+        {% for user in user_details %}
+            <tr>
+                <th> Username</th>
+                <td>{{ user.username }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ user.email }}</td>
+            </tr>
+             <tr>
+                <th>First Name</th>
+                <td>{{ user.first_name }}</td>
+            </tr>
+            <tr>
+                <th>Last Name</th>
+                <td>{{ user.last_name }}</td>
+            </tr>
+
+        {% endfor %}
+    </table>
+    <div>
+        <a class="al" href="{% url 'edit_account_details' %}">Edit details</a>
+        <a class="al" href="{% url 'change_password' %}">Change Password</a>
+        <a class="al-d" href="{% url 'delete_account' %}">Delete Account</a>
+    </div>
+</body>
+</html>

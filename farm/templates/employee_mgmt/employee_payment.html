@@ -1,6 +1,24 @@
 {%  extends 'farm/base_dashboard.html' %}
 {% block content %}
-<h3 class="col-md-5 mx-auto mt-2">Employee Management</h3>
+
+<style>
+    body{
+        background: black;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 16px;
+        ext-align: left;
+    }
+
+    th {
+        background-color: rgb(240,50,50);
+        color: #fff;
+        font-weight: bold;
+        }
+
+</style>
+<h3 class="col-md-5 mx-auto mt-2" style="color:blue;">Employee Management</h3>
 <div class="row">
     <div class="col-md-2" style="border-right: 3px solid #ddd;">
         <a href="{% url 'dashboard' %}"><button class="btn btn-link">dashboard</button></a>
@@ -17,7 +35,7 @@
                    <th scope="col">Salary</th>
                    <th scope="col">Unpaid Months</th>
                    <th scope="col"></th>
-                   <th scope="col"></th>
+
 
                </tr>
            </thead>
@@ -37,8 +55,8 @@
                        <th scope="row">{{ employee.employee_id }}</th>
                        <td>{{ employee.salary }}</td>
                        <td>{{ employee.unpaid_months}}</td>
-                       <td><a href="{% url 'edit-unpaidmonths' employee.employee_id %}"><button class="btn btn-secondary btn-sm">edit</button></a></td>
-                       <td><a href="{% if employee.unpaid_months != 0 %}{% url 'make-payments' employee.employee_id %}{% endif %}">
+                       <td><a href="{% url 'edit-unpaidmonths' employee.employee_id %}"><button class="btn btn-secondary btn-sm">edit</button></a>
+                           <a href="{% if employee.unpaid_months != 0 %}{% url 'make-payments' employee.employee_id %}{% endif %}">
                            <button class="btn btn-secondary btn-sm"
                                    {% if employee.unpaid_months == 0 %}onclick="alert('This employee has been fully paid'); return false;"{% endif %}>
                                make payments

@@ -1,7 +1,16 @@
 {% extends 'farm/base.html' %}
 {% load crispy_forms_tags %}
-
+{% load static %}
 {% block content%}
+<style>
+     body {
+        background: url("{% static 'farm6.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100;
+    }
+</style>
 <div class="row">
     <div class="col-11 col-md-4 mx-auto mt-5">
         <h1>Log In</h1>
@@ -12,7 +21,8 @@
             <button class="btn btn-primary">Sign In</button>
         </form>
         <div class="pt-3">
-            <small class="text-muted"> Need an account? <a href="{% url 'signup' %}" class="ml-2">Sign Up</a></small>
+            <p> Need an account? <a href="{% url 'signup' %}" class="text-success ml-2">Sign Up</a></P><br>
+            <a href="{% url 'forgot_password' %}" class="text-success ml-2">Forgot Password?</a><br><br>
         </div>
     </div>
 </div>

@@ -2,7 +2,23 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<a href="{% url 'payment-status' %}" class="btn btn=outline-primary my-3 mx-4">Go Back</a>
+<style>
+    body{
+        background: black;
+    }
+    form{
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        font: black;
+        font-weight: bold;
+    }
+    label{
+        color:black;
+    }
+</style>
+<a href="{% url 'payment-status' %}" class="btn btn-outline-secondary my-3 mx-4">Go Back</a>
 <div class="row">
     <div class="cil-11 col-md-4 mx-auto mt-5">
         <h3>Confirm payment of ksh.{{employee.salary}} to {{employee.name}}</h3>
