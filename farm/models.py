@@ -102,7 +102,7 @@ class category(models.Model):
     name = models.CharField(max_length=25)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
 class Sale(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -45,11 +45,11 @@ class Dashboard(LoginRequiredMixin,View):
         livestock_expenses = []
         other_expenses = []
         for expense in expenses:
-            if expense.category == 'crop':
+            if expense.category_id == 1:
                 crop_expenses.append(expense)
-            if expense.category == 'livestock':
+            if expense.category_id == 2:
                 livestock_expenses.append(expense)
-            if expense.category == 'other':
+            if expense.category_id == 3:
                 other_expenses.append(expense)
         total_crop_expenses = sum(expense.cost for expense in crop_expenses)
         total_livestock_expenses = sum(expense.cost for expense in livestock_expenses)
@@ -60,24 +60,26 @@ class Dashboard(LoginRequiredMixin,View):
         livestock_sales = []
         other_sales = []
         for sale in sales:
-            if sale.category == 'crop':
+            if sale.category_id == 1:
                 crop_sales.append(sale)
-            if sale.category == 'livestock':
+            if sale.category_id == 2:
                 livestock_sales.append(sale)
-            if sale.category == 'other':
+            if sale.category_id == 3:
                 other_sales.append(sale)
         total_crop_sales = sum(sale.total_amount for sale in crop_sales)
         total_livestock_sales = sum(sale.total_amount for sale in livestock_sales)
         total_other_sales = sum(sale.total_amount for sale in other_sales)
 
+        total_amount = total_sale + total_expense
+
         try:
-            percent_crop_sales = total_crop_sales / total_sale * 100
-            percent_livestock_sales = total_livestock_sales / total_sale * 100
-            percent_other_sales = total_other_sales / total_sale * 100
-            percent_crop_exp = total_crop_expenses/total_expense * 100
-            percent_livestock_exp = total_livestock_expenses/total_expense * 100
-            percent_other_exp = total_other_expenses/total_expense * 100
-            percent_employee_salary = total_amount_paid/total_expense * 100
+            percent_crop_sales = total_crop_sales / total_amount * 100
+            percent_livestock_sales = total_livestock_sales / total_amount * 100
+            percent_other_sales = total_other_sales / total_amount * 100
+            percent_crop_exp = total_crop_expenses/total_amount * 100
+            percent_livestock_exp = total_livestock_expenses/total_amount * 100
+            percent_other_exp = total_other_expenses/total_amount * 100
+            percent_employee_salary = total_amount_paid/total_amount * 100
 
         except ZeroDivisionError:
             percent_crop_exp = 0
@@ -98,7 +100,7 @@ class Dashboard(LoginRequiredMixin,View):
             'net_benefit': net_benefit,
             'profit_loss': profit_loss,
             'percent_crop_exp': percent_crop_exp,
-            'percent_livestock_exp ': percent_livestock_exp,
+            'percent_livestock_exp': percent_livestock_exp,
             'percent_other_exp': percent_other_exp,
             'percent_employee_salary': percent_employee_salary,
             'percent_livestock_sales': percent_livestock_sales,
@@ -616,11 +618,11 @@ def financial_general_report(request):
     livestock_expenses = []
     other_expenses = []
     for expense in expenses:
-        if expense.category == 'crop':
+        if expense.category_id == 1:
             crop_expenses.append(expense)
-        if expense.category == 'livestock':
+        if expense.category_id == 2:
             livestock_expenses.append(expense)
-        if expense.category == 'other':
+        if expense.category_id == 3:
             other_expenses.append(expense)
     total_crop_expenses = sum(expense.cost for expense in crop_expenses)
     total_livestock_expenses = sum(expense.cost for expense in livestock_expenses)
@@ -631,11 +633,11 @@ def financial_general_report(request):
     livestock_sales = []
     other_sales = []
     for sale in sales:
-        if sale.category == 'crop':
+        if sale.category_id == 1:
             crop_sales.append(sale)
-        if sale.category == 'livestock':
+        if sale.category_id == 2:
             livestock_sales.append(sale)
-        if sale.category == 'other':
+        if sale.category_id == 3:
             other_sales.append(sale)
     total_crop_sales = sum(sale.total_amount for sale in crop_sales)
     total_livestock_sales = sum(sale.total_amount for sale in livestock_sales)
@@ -662,11 +664,11 @@ def general_expense_summary(request):
     livestock_expenses = []
     other_expenses = []
     for expense in expenses:
-        if expense.category == 'crop':
+        if expense.category_id == 1:
             crop_expenses.append(expense)
-        if expense.category == 'livestock':
+        if expense.category_id == 2:
             livestock_expenses.append(expense)
-        if expense.category == 'other':
+        if expense.category_id == 3:
             other_expenses.append(expense)
     total_crop_expenses = sum(expense.cost for expense in crop_expenses)
     total_livestock_expenses = sum(expense.cost for expense in livestock_expenses)
@@ -688,7 +690,7 @@ def general_expense_summary(request):
         percent_livestock_exp = 0
         percent_other_exp = 0
         percent_employee_salary = 0
-
+    print(percent_livestock_exp)
     context = {
         'total_expense': total_expense,
         'total_crop_expenses': total_crop_expenses,
@@ -696,7 +698,7 @@ def general_expense_summary(request):
         'total_other_expenses': total_other_expenses,
         'total_amount_paid': total_amount_paid,
         'percent_crop_exp': percent_crop_exp,
-        'percent_livestock_exp ': percent_livestock_exp,
+        'percent_livestock_exp': percent_livestock_exp,
         'percent_other_exp': percent_other_exp,
         'percent_employee_salary': percent_employee_salary,
 
@@ -709,7 +711,7 @@ def detailed_crop_expense(request):
     crop_expenses = []
     crop_expense_names = []
     for expense in expenses:
-        if expense.category == 'crop':
+        if expense.category_id == 1:
             crop_expenses.append(expense)
             crop_expense_names.append(expense.expense_name)
     expense_types = []
@@ -736,7 +738,7 @@ def detailed_livestock_expenses( request):
     livestock_expenses = []
     livestock_expense_names = []
     for expense in expenses:
-        if expense.category == 'livestock':
+        if expense.category_id == 2:
             livestock_expenses.append(expense)
             livestock_expense_names.append(expense.expense_name)
     expense_types = []
@@ -749,7 +751,9 @@ def detailed_livestock_expenses( request):
     total_amount = sum(expense.cost for expense in livestock_expenses)
     expense_by_type = [expenses.filter(expense_name=expense_type).aggregate(total=models.Sum('cost'))['total'] or 0 for expense_type in expense_types]
     expense_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in expense_by_type]
-
+    print(total_amount)
+    print(expense_by_type)
+    print(expense_distribution)
     context = {
         'livestock_expenses': livestock_expenses,
         'expense_types': expense_types,
@@ -764,7 +768,7 @@ def detailed_other_expense(request):
     other_expenses = []
     other_expense_names = []
     for expense in expenses:
-        if expense.category == 'other':
+        if expense.category_id == 3:
             other_expenses.append(expense)
             other_expense_names.append(expense.expense_name)
     expense_types = []
@@ -792,11 +796,11 @@ def general_sale_summary(request):
     livestock_sales = []
     other_sales = []
     for sale in sales:
-        if sale.category == 'crop':
+        if sale.category_id == 1:
             crop_sales.append(sale)
-        if sale.category == 'livestock':
+        if sale.category_id == 2:
             livestock_sales.append(sale)
-        if sale.category == 'other':
+        if sale.category_id == 3:
             other_sales.append(sale)
     total_crop_sales = sum(sale.total_amount for sale in crop_sales)
     total_livestock_sales = sum(sale.total_amount for sale in livestock_sales)
@@ -829,7 +833,7 @@ def detailed_crop_sale(request):
     crop_sales = []
     crop_sales_names = []
     for sale in sales:
-        if sale.category == 'crop':
+        if sale.category_id == 1:
             crop_sales.append(sale)
             crop_sales_names.append(sale.product_name)
     product_types = []
@@ -856,7 +860,7 @@ def detailed_livestock_sale(request):
     livestock_sales = []
     livestock_sales_names = []
     for sale in sales:
-        if sale.category == 'livestock':
+        if sale.category_id == 2:
             livestock_sales.append(sale)
             livestock_sales_names.append(sale.product_name)
     product_types = []
@@ -883,7 +887,7 @@ def detailed_other_sale(request):
     other_sales = []
     other_sales_names = []
     for sale in sales:
-        if sale.category == 'other':
+        if sale.category_id == 3:
             other_sales.append(sale)
             other_sales_names.append(sale.product_name)
     product_types = []

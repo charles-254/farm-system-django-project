@@ -2,9 +2,6 @@
 {% load static %}
 {% block content %}
 <style>
-    bodY{
-        background: black;
-    }
 
     #dash{
         position: absolute;
@@ -53,7 +50,7 @@
                 <div class="container mt-5">
                     <h1 class="text-center">Farm Data</h1>
                     <p class="fw-light">This is a comparison of all data in each category since starting of farm</p>
-                    <canvas id="myChart" width="400" height="200"></canvas>
+                    <canvas id="myChart" width="400" height="230"></canvas>
                 </div>
 
                 <script>
@@ -64,7 +61,7 @@
                             labels: ['crop sales', 'crop expenses', 'livestock sales', 'livestock expenses', 'other sales', 'other expenses', 'employee salary'],
                             datasets: [{
                                 label: '%',
-                                data: [{{percent_crop_sale}}, {{percent_crop_exp}}, {{percent_livestock_sales}}, {{percent_livestock_exp}}, {{percent_other_sales}}, {{percent_other_exp}}, {{percent_employee_salary}}],
+                                data: [{{percent_crop_sales}}, {{percent_crop_exp}}, {{percent_livestock_sales}}, {{percent_livestock_exp}}, {{percent_other_sales}}, {{percent_other_exp}}, {{percent_employee_salary}}],
                                 backgroundColor: [
                                     'rgba(255, 99, 132, 0.2)',
                                     'rgba(54, 162, 235, 0.2)',

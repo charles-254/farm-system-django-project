@@ -124,7 +124,11 @@
             {% for type in expense_types %}
             <tr>
                 <td>{{ type }}</td>
-                <td>{{ total_expense }}</td>
+            </tr>
+            {% endfor %}
+            {% for expense in expense_by_type %}
+            <tr>
+                <td>{{ expense }}</td>
             </tr>
             {% endfor %}
         </tbody>

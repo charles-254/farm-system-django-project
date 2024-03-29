@@ -145,10 +145,7 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 var productTypes = {{ product_types|safe }};
-                var salesByType = {{ sale_by_type|safe }};
                 var saleDistribution = {{ sale_distribution|safe }};
-
-                var saleByTypeData = salesByType.map(parseFloat);
 
                 var ctx = document.getElementById('myChart').getContext('2d');
                     var myChart = new Chart(ctx, {
