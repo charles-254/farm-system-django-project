@@ -121,13 +121,13 @@
             </tr>
         </thead>
         <tbody>
-            {% for type in expense_types %}
-            <tr>
-                <td>{{ type }}</td>
-                <td>{{ total_expense }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+        {% for type, expense in zipped_data %}
+        <tr>
+            <td>{{ type }}</td>
+            <td>{{ expense }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
     </table><br>
     <div>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -139,11 +139,7 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 var expenseTypes = {{ expense_types|safe }};
-                var expensesByType = {{ expenses_by_type|safe }};
                 var expenseDistribution = {{ expense_distribution|safe }};
-
-                // Convert expensesByType to an array of floats
-                var expensesByTypeData = expensesByType.map(parseFloat);
 
                 var ctx = document.getElementById('myChart').getContext('2d');
                     var myChart = new Chart(ctx, {

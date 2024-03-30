@@ -77,7 +77,7 @@ class SaleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        categories = category.objects.all() #oher to hold sale not related to farm product eg sellin equipments
+        categories = Category.objects.all() #oher to hold sale not related to farm product eg sellin equipments
         self.fields['category'].queryset = categories
 
 class ExpenseForm(forms.ModelForm):

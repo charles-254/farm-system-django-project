@@ -9,6 +9,7 @@ from .forms import *
 from .models import *
 from datetime import date
 from django.contrib.auth.views import PasswordChangeView
+from itertools import zip_longest
 
 class Index(TemplateView):
     template_name = 'farm/index.html'
@@ -264,7 +265,6 @@ class MakePayments(LoginRequiredMixin, UpdateView):
 class PaymentRecordsView(LoginRequiredMixin, View):
     def get(self, request):
         payment_records = PaymentRecords.objects.filter(employee_id__user_id=request.user.id).order_by('employee_id')
-        #total_amount_paid = TotalAmountPaid.objects.aggregate(total=sum('total_amount'))['total'] or 0
         amounts = TotalAmountPaid.objects.all()
         total_amount_paid = sum(amount.total_amount for amount in amounts)
         print(payment_records)
@@ -489,7 +489,9 @@ def sale_list(request):
 
     sales = Sale.objects.filter(user=request.user).all()
     if category:
-        sales = sales.filter(category=category)
+        category_obj = Category.objects.get(name=category)
+        category_id = category_obj.id
+        sales = sales.filter(category_id=category_id)
     if product_name:
         sales = sales.filter( product_name=product_name)
     if start_date:
@@ -497,7 +499,7 @@ def sale_list(request):
     if end_date:
         sales = sales.filter(date__lte=end_date)
 
-    categories = Sale.objects.filter(user=request.user).values_list('category', flat=True).distinct()
+    categories = Category.objects.values_list('name', flat=True).distinct()
     product_names = Sale.objects.filter(user=request.user).values_list('product_name', flat=True).distinct()
     total_sales_amount = Sale.objects.filter(user=request.user).aggregate(total_amounts=models.Sum('total_amount'))[
                         'total_amounts'] or 0
@@ -550,7 +552,9 @@ def expense_list(request):
     # Filter expenses based on provided filters
     expenses = Expense.objects.filter(user=request.user).all()
     if category:
-        expenses = expenses.filter(category=category)
+        category_obj = Category.objects.get(name=category)
+        category_id = category_obj.id
+        expenses = expenses.filter(category_id=category_id)
     if expense_name:
         expenses = expenses.filter(expense_name=expense_name)
     if start_date:
@@ -558,7 +562,7 @@ def expense_list(request):
     if end_date:
         expenses = expenses.filter(date__lte=end_date)
 
-    categories = Expense.objects.filter(user=request.user).values_list('category', flat=True).distinct()
+    categories = Category.objects.values_list('name', flat=True).distinct()
     expense_names = Expense.objects.filter(user=request.user).values_list('expense_name', flat=True).distinct()
     total_expense = Expense.objects.filter(user=request.user).aggregate(total_expenses=models.Sum('cost'))['total_expenses'] or 0
 
@@ -722,14 +726,13 @@ def detailed_crop_expense(request):
     total_amount = sum(expense.cost for expense in crop_expenses)
     expense_by_type = [expenses.filter(expense_name=expense_type).aggregate(total=models.Sum('cost'))['total'] or 0 for expense_type in expense_types]
     expense_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in expense_by_type]
-    print(expense_types)
-    print(expense_by_type)
-    print(expense_distribution)
+    zipped_data = zip_longest(expense_types, expense_by_type, fillvalue='')
     context = {
         'crop_expenses': crop_expenses,
         'expense_types': expense_types,
         'expense_by_type': expense_by_type,
         'expense_distribution': expense_distribution,
+        'zipped_data': zipped_data
     }
     return render(request, 'expense_summary/detailed_crop_expense_summary.html', context)
 
@@ -745,20 +748,16 @@ def detailed_livestock_expenses( request):
     for name in livestock_expense_names:
         if name not in expense_types:
             expense_types.append(name)
-    print(livestock_expenses)
-    print(livestock_expense_names)
-    print(expense_types)
     total_amount = sum(expense.cost for expense in livestock_expenses)
     expense_by_type = [expenses.filter(expense_name=expense_type).aggregate(total=models.Sum('cost'))['total'] or 0 for expense_type in expense_types]
     expense_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in expense_by_type]
-    print(total_amount)
-    print(expense_by_type)
-    print(expense_distribution)
+    zipped_data = zip_longest(expense_types, expense_by_type, fillvalue='')
     context = {
         'livestock_expenses': livestock_expenses,
         'expense_types': expense_types,
         'expense_by_type': expense_by_type,
         'expense_distribution': expense_distribution,
+        'zipped_data': zipped_data
     }
     return render(request, 'expense_summary/detailed_livestock_expense_summary.html', context)
 
@@ -781,12 +780,13 @@ def detailed_other_expense(request):
                        expense_type in expense_types]
     expense_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in
                             expense_by_type]
-
+    zipped_data = zip_longest(expense_types, expense_by_type, fillvalue='')
     context = {
         'other_expenses': other_expenses,
         'expense_types': expense_types,
         'expense_by_type': expense_by_type,
         'expense_distribution': expense_distribution,
+        'zipped_data': zipped_data
     }
     return render(request, 'expense_summary/detailed_other_expense_summary.html', context)
 
@@ -844,14 +844,13 @@ def detailed_crop_sale(request):
     total_amount = sum(sale.total_amount for sale in crop_sales)
     sale_by_type = [sales.filter(product_name=product_type).aggregate(total=models.Sum('total_amount'))['total'] or 0 for product_type in product_types]
     sale_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in sale_by_type]
-    print(product_types)
-    print(sale_by_type)
-    print(sale_distribution)
+    zipped_data = zip_longest(product_types, sale_by_type, fillvalue='')
     context = {
         'crop_sales': crop_sales,
         'product_types': product_types,
         'sale_by_type': sale_by_type,
         'sale_distribution': sale_distribution,
+        'zipped_data': zipped_data
     }
     return render(request, 'sale_summary/detailed_crop_sale_summary.html', context)
 
@@ -871,14 +870,13 @@ def detailed_livestock_sale(request):
     total_amount = sum(sale.total_amount for sale in livestock_sales)
     sale_by_type = [sales.filter(product_name=product_type).aggregate(total=models.Sum('total_amount'))['total'] or 0 for product_type in product_types]
     sale_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in sale_by_type]
-    print(product_types)
-    print(sale_by_type)
-    print(sale_distribution)
+    zipped_data = zip_longest(product_types, sale_by_type, fillvalue='')
     context = {
         'livestock_sales': livestock_sales,
         'product_types': product_types,
         'sale_by_type': sale_by_type,
         'sale_distribution': sale_distribution,
+        'zipped_data': zipped_data
     }
     return render(request, 'sale_summary/detailed_livestock_sale_summary.html', context)
 
@@ -898,14 +896,13 @@ def detailed_other_sale(request):
     total_amount = sum(sale.total_amount for sale in other_sales)
     sale_by_type = [sales.filter(product_name=product_type).aggregate(total=models.Sum('total_amount'))['total'] or 0 for product_type in product_types]
     sale_distribution = [float(amount) / float(total_amount) * 100 if total_amount > 0 else 0 for amount in sale_by_type]
-    print(product_types)
-    print(sale_by_type)
-    print(sale_distribution)
+    zipped_data = zip_longest(product_types, sale_by_type, fillvalue='')
     context = {
         'other_sales': other_sales,
         'product_types': product_types,
         'sale_by_type': sale_by_type,
         'sale_distribution': sale_distribution,
+        'zipped_data': zipped_data
     }
     return render(request, 'sale_summary/detailed_other_sale_summary.html', context)
 

@@ -98,7 +98,7 @@ class Task(models.Model):
     def __str__(self):
         return self.name
 
-class category(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=25)
 
     def __str__(self):
@@ -107,7 +107,7 @@ class category(models.Model):
 class Sale(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     sale_id = models.AutoField(primary_key=True)
-    category = models.ForeignKey(category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     product_name = models.CharField(max_length=255)
     quantity = models.PositiveIntegerField()
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -125,7 +125,7 @@ class Sale(models.Model):
 class Expense(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     expense_id = models.AutoField(primary_key=True)
-    category = models.ForeignKey(category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     expense_name = models.CharField(max_length=25)
     description = models.CharField(max_length=255)
     cost = models.DecimalField(max_digits=10, decimal_places=2)

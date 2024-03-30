@@ -115,26 +115,23 @@
     </table><br>
     <h1>Summary By Product Types </h1><br>
 
-    <table class="table table-hover table-striped">
-        <thead >
-            <tr>
-                <th style="background: rgb(0,100,0);">Product Type</th>
-                <th style="background: rgb(0,100,0);">Total Sales</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for product in product_types %}
-            <tr>
-                <td>{{ product }}</td>
-            </tr>
-            {% endfor %}
-            {% for total_sales in sale_by_type %}
-            <tr>
-                <td>{{ total_sales }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table><br>
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <th style="background: rgb(0,100,0);">Product Type</th>
+            <th style="background: rgb(0,100,0);">Total Sales</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product, total_sales in zipped_data %}
+        <tr>
+            <td>{{ product }}</td>
+            <td>{{ total_sales }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table><br>
+
     <div>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <div class="container mt-5">
